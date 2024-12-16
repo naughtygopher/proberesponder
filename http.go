@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	httpHeaderAccept           = "Accept"
 	httpHeaderContentType      = "Content-Type"
 	httpHeaderContentTypeJSON  = "application/json"
 	httpHeaderContentTypeHTML  = "text/html"
@@ -62,7 +63,7 @@ func respond(pres *ProbeResponder, w http.ResponseWriter, r *http.Request) {
 }
 
 func contentNeogiater(r *http.Request, payload map[string]string) (cType string, bPayload []byte) {
-	ctype := r.Header.Get(httpHeaderContentType)
+	ctype := r.Header.Get(httpHeaderAccept)
 	if strings.Contains(ctype, httpHeaderContentTypeHTML) {
 		cType = httpHeaderContentTypeHTML
 		bPayload = responseAsHTML(payload)
@@ -96,4 +97,12 @@ func responseAsPlainText(payload map[string]string) []byte {
 		buff.WriteString(fmt.Sprintf("%s: %s|", key, value))
 	}
 	return buff.Bytes()
+}
+
+func StartHTTPServer(pres *ProbeResponder, host string, port uint16) error {
+	smux := http.NewServeMux()
+	smux.Handle("/-/startup", HTTPStartup(pres))
+	smux.Handle("/-/ready", HTTPReady(pres))
+	smux.Handle("/-/live", HTTPLive(pres))
+	return http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), smux)
 }
