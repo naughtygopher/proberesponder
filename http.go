@@ -99,6 +99,7 @@ func responseAsPlainText(payload map[string]string) []byte {
 	return buff.Bytes()
 }
 
+// StartHTTPServer is a basic/standard Golang HTTP server with the 3 handlers setup, for probes
 func StartHTTPServer(pres *ProbeResponder, host string, port uint16) error {
 	smux := http.NewServeMux()
 	smux.Handle("/-/startup", HTTPStartup(pres))

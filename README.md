@@ -18,10 +18,10 @@ import (
 
 func main() {
     pRes := proberesponder.New()
-    // do something to startup your app, once finished
+    // do something to startup your app & once finished
     pRes.SetNotStarted(false)
 
-    // if you're running an API server (HTTP, gRPC etc.), start the servers and then.
+    // if you're running an API server (HTTP, gRPC etc.), start the servers and then setup live and ready.
     pRes.SetNotLive(false)
 	pRes.SetNotReady(false)
 }
