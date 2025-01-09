@@ -50,6 +50,10 @@ func main() {
 
     // retrieves all the statuses maintained by the proberesponder, it returns a map[string]string
     _ = pRes.HealthResponse()
+
+    // my silly way of making the app wait and not quit
+    waiter := make(chan struct{})
+	<-waiter
 }
 ```
 
