@@ -53,6 +53,19 @@ func main() {
 }
 ```
 
+Below is an example of probe responses for HTTP requests using curl.
+
+```bash
+$ curl -H 'Accept: text/plain' localhost:1234/-/startup
+mydb: OK | probe->live: OK: 2025-01-09T17:45:24+01:00 | probe->ready: OK: 2025-01-09T17:45:24+01:00 | probe->startup: OK: 2025-01-09T17:45:24+01:00 |
+
+$ curl -H 'Accept: text/plain' localhost:1234/-/ready
+probe->ready: OK: 2025-01-09T17:45:24+01:00 | probe->startup: OK: 2025-01-09T17:45:24+01:00 | mydb: OK | probe->live: OK: 2025-01-09T17:45:24+01:00 |
+
+$ curl -H 'Accept: text/plain' localhost:1234/-/live
+probe->startup: OK: 2025-01-09T17:45:24+01:00 | mydb: OK | probe->live: OK: 2025-01-09T17:45:24+01:00 | probe->ready: OK: 2025-01-09T17:45:24+01:00 |
+```
+
 ## The gopher
 
 The gopher used here was created using [Gopherize.me](https://gopherize.me/). Just like the handyman gopher here, proberesponder helps setup, well, a probe responder!

@@ -94,7 +94,7 @@ func responseAsHTML(payload map[string]string) []byte {
 func responseAsPlainText(payload map[string]string) []byte {
 	buff := bytes.NewBuffer([]byte{})
 	for key, value := range payload {
-		buff.WriteString(fmt.Sprintf("%s: %s|", key, value))
+		buff.WriteString(fmt.Sprintf("%s: %s | ", key, value))
 	}
 	return buff.Bytes()
 }
