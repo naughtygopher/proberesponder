@@ -22,38 +22,41 @@ By default a bare bones HTTP server can be setup to respond to probe request. Th
 
 ```golang
 package main
+
 import (
-    "github.com/naughtygopher/proberesponder"
+	"fmt"
+	"time"
+
+	"github.com/naughtygopher/proberesponder"
+	pHTTP "github.com/naughtygopher/proberesponder/extensions/http"
 )
 
 func main() {
-    pRes := proberesponder.New()
-    // setup an HTTP server to handle probe requests
-    go proberesponder.StartHTTPServer(pres, "localhost", 1234)
+	pRes := proberesponder.New()
+	// setup an HTTP server to handle probe requests
+	go pHTTP.StartHTTPServer(pRes, "localhost", 1234)
 
-    // with set listener you can register a callback, for when any of the statuses
-    // (startup, live, ready) is changed
-    pRes.SetListener(func(status Statuskey, value bool) {
-        fmt.Println(status, "changed to", value)
-    })
+	// with set listener you can register a callback, for when any of the statuses
+	// (startup, live, ready) is changed
+	pRes.SetListener(func(status proberesponder.Statuskey, value bool) {
+		fmt.Println(status, "changed to", value)
+	})
 
-    // Update the status of the app as Startup: OK
-    pRes.SetNotStarted(false)
+	// Update the status of the app as Startup: OK
+	pRes.SetNotStarted(false)
 
-    // update the status of app as Live: OK
-    pRes.SetNotLive(false)
-    // update the status of app as Ready: OK
-    pRes.SetNotReady(false)
+	// update the status of app as Live: OK
+	pRes.SetNotLive(false)
+	// update the status of app as Ready: OK
+	pRes.SetNotReady(false)
 
-    // set status of any service
-    pRes.AppendHealthResponse("mydb", "OK")
+	// set status of any service
+	pRes.AppendHealthResponse("mydb", "OK")
 
-    // retrieves all the statuses maintained by the proberesponder, it returns a map[string]string
-    _ = pRes.HealthResponse()
+	// retrieves all the statuses maintained by the proberesponder, it returns a map[string]string
+	_ = pRes.HealthResponse()
 
-    // my silly way of making the app wait and not quit
-    waiter := make(chan struct{})
-	<-waiter
+	time.Sleep(time.Hour)
 }
 ```
 
