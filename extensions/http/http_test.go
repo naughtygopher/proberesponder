@@ -2,6 +2,7 @@ package http
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,16 +14,20 @@ import (
 
 func TestHTTPStartup(tt *testing.T) {
 	requirer := require.New(tt)
+	const (
+		httpHost = "localhost"
+		httpPort = 1234
+	)
+	addr := fmt.Sprintf("http://%s:%d%s", httpHost, httpPort, HTTPPathStartup)
 	tt.Run("NotStarted: true", func(t *testing.T) {
 		asserter := assert.New(t)
 		pRes := proberesponder.New()
 		pRes.SetNotStarted(true)
 		w := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		r, err := http.NewRequest(http.MethodGet, addr, nil)
 		r.Header.Set(httpHeaderAccept, httpHeaderContentTypePlain)
 		requirer.NoError(err)
-		handler := HTTPStartup(pRes)
-		handler(w, r)
+		Server(pRes, httpHost, httpPort).Handler.ServeHTTP(w, r)
 
 		text := w.Body.String()
 		asserter.Contains(text, "|")
@@ -34,11 +39,10 @@ func TestHTTPStartup(tt *testing.T) {
 		pRes := proberesponder.New()
 		pRes.SetNotStarted(false)
 		w := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		r, err := http.NewRequest(http.MethodGet, addr, nil)
 		r.Header.Set(httpHeaderAccept, httpHeaderContentTypePlain)
 		requirer.NoError(err)
-		handler := HTTPStartup(pRes)
-		handler(w, r)
+		Server(pRes, httpHost, httpPort).Handler.ServeHTTP(w, r)
 
 		text := w.Body.String()
 		asserter.Contains(text, "|")
@@ -102,16 +106,20 @@ func TestHTTPStartup(tt *testing.T) {
 
 func TestHTTPReady(tt *testing.T) {
 	requirer := require.New(tt)
+	const (
+		httpHost = "localhost"
+		httpPort = 1234
+	)
+	addr := fmt.Sprintf("http://%s:%d%s", httpHost, httpPort, HTTPPathReady)
 	tt.Run("NotReady: true", func(t *testing.T) {
 		asserter := assert.New(t)
 		pRes := proberesponder.New()
 		pRes.SetNotReady(true)
 		w := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		r, err := http.NewRequest(http.MethodGet, addr, nil)
 		r.Header.Set(httpHeaderAccept, httpHeaderContentTypePlain)
 		requirer.NoError(err)
-		handler := HTTPReady(pRes)
-		handler(w, r)
+		Server(pRes, httpHost, httpPort).Handler.ServeHTTP(w, r)
 
 		text := w.Body.String()
 		asserter.Contains(text, "|")
@@ -123,11 +131,10 @@ func TestHTTPReady(tt *testing.T) {
 		pRes := proberesponder.New()
 		pRes.SetNotReady(false)
 		w := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		r, err := http.NewRequest(http.MethodGet, addr, nil)
 		r.Header.Set(httpHeaderAccept, httpHeaderContentTypePlain)
 		requirer.NoError(err)
-		handler := HTTPReady(pRes)
-		handler(w, r)
+		Server(pRes, httpHost, httpPort).Handler.ServeHTTP(w, r)
 
 		text := w.Body.String()
 		asserter.Contains(text, "|")
@@ -191,16 +198,20 @@ func TestHTTPReady(tt *testing.T) {
 
 func TestHTTPLive(tt *testing.T) {
 	requirer := require.New(tt)
+	const (
+		httpHost = "localhost"
+		httpPort = 1234
+	)
+	addr := fmt.Sprintf("http://%s:%d%s", httpHost, httpPort, HTTPPathLive)
 	tt.Run("NotLive: true", func(t *testing.T) {
 		asserter := assert.New(t)
 		pRes := proberesponder.New()
 		pRes.SetNotLive(true)
 		w := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		r, err := http.NewRequest(http.MethodGet, addr, nil)
 		r.Header.Set(httpHeaderAccept, httpHeaderContentTypePlain)
 		requirer.NoError(err)
-		handler := HTTPLive(pRes)
-		handler(w, r)
+		Server(pRes, httpHost, httpPort).Handler.ServeHTTP(w, r)
 
 		text := w.Body.String()
 		asserter.Contains(text, "|")
@@ -212,11 +223,10 @@ func TestHTTPLive(tt *testing.T) {
 		pRes := proberesponder.New()
 		pRes.SetNotLive(false)
 		w := httptest.NewRecorder()
-		r, err := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		r, err := http.NewRequest(http.MethodGet, addr, nil)
 		r.Header.Set(httpHeaderAccept, httpHeaderContentTypePlain)
 		requirer.NoError(err)
-		handler := HTTPLive(pRes)
-		handler(w, r)
+		Server(pRes, httpHost, httpPort).Handler.ServeHTTP(w, r)
 
 		text := w.Body.String()
 		asserter.Contains(text, "|")

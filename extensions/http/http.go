@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/naughtygopher/proberesponder"
 )
@@ -19,6 +20,10 @@ const (
 	httpHeaderContentTypeXML   = "application/xml"
 	httpHeaderContentTypeHTML  = "text/html"
 	httpHeaderContentTypePlain = "text/plain"
+
+	HTTPPathStartup = "/-/startup"
+	HTTPPathReady   = "/-/ready"
+	HTTPPathLive    = "/-/live"
 )
 
 var (
@@ -150,11 +155,23 @@ func responseAsXML(payload map[string]string) []byte {
 	return buff.Bytes()
 }
 
-// StartHTTPServer is a basic/standard Golang HTTP server with the 3 handlers setup, for probes
-func StartHTTPServer(pres *proberesponder.ProbeResponder, host string, port uint16) error {
+// Server is a basic/standard Golang HTTP server with the 3 handlers setup, for probes
+func Server(pres *proberesponder.ProbeResponder, host string, port uint16) *http.Server {
 	smux := http.NewServeMux()
-	smux.Handle("/-/startup", HTTPStartup(pres))
-	smux.Handle("/-/ready", HTTPReady(pres))
-	smux.Handle("/-/live", HTTPLive(pres))
-	return http.ListenAndServe(fmt.Sprintf("%s:%d", host, port), smux)
+	smux.Handle(HTTPPathStartup, HTTPStartup(pres))
+	smux.Handle(HTTPPathReady, HTTPReady(pres))
+	smux.Handle(HTTPPathLive, HTTPLive(pres))
+	return &http.Server{
+		Addr:              fmt.Sprintf("%s:%d", host, port),
+		Handler:           smux,
+		ReadHeaderTimeout: time.Second,
+		ReadTimeout:       time.Second,
+		WriteTimeout:      time.Second * 5,
+		IdleTimeout:       time.Minute,
+	}
+}
+
+// StartHTTPServer directly initializes and starts a basic HTTP probe responder
+func StartHTTPServer(pres *proberesponder.ProbeResponder, host string, port uint16) error {
+	return Server(pres, host, port).ListenAndServe()
 }
