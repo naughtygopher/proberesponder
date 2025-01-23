@@ -73,8 +73,8 @@ func ProbeDependencies(
 	healthOK := proberesponder.HealthOK.String()
 	healthNotOK := proberesponder.HealthNotOK.String()
 
-	for _, pinger := range probers {
-		go func() {
+	for i := range probers {
+		go func(pinger Prober) {
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
 			defer cancel()
 			hc := DependencyStatus{
@@ -88,7 +88,7 @@ func ProbeDependencies(
 				hc.Status = healthNotOK
 			}
 			statuses <- hc
-		}()
+		}(probers[i])
 	}
 
 	list := make([]DependencyStatus, 0, total)
