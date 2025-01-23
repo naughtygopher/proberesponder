@@ -34,6 +34,13 @@ var (
 	}, ",")
 )
 
+type httpMethod string
+type Handlers struct {
+	httpMethod
+	string
+	http.HandlerFunc
+}
+
 func HTTPStartup(pres *proberesponder.ProbeResponder) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -155,12 +162,27 @@ func responseAsXML(payload map[string]string) []byte {
 	return buff.Bytes()
 }
 
-// Server is a basic/standard Golang HTTP server with the 3 handlers setup, for probes
-func Server(pres *proberesponder.ProbeResponder, host string, port uint16) *http.Server {
+// Server is a basic/standard Golang HTTP server with the 3 default handlers for probes
+func Server(pres *proberesponder.ProbeResponder, host string, port uint16, handlers ...Handlers) *http.Server {
 	smux := http.NewServeMux()
-	smux.Handle(HTTPPathStartup, HTTPStartup(pres))
-	smux.Handle(HTTPPathReady, HTTPReady(pres))
-	smux.Handle(HTTPPathLive, HTTPLive(pres))
+	if len(handlers) == 0 {
+		handlers = []Handlers{
+			{http.MethodGet, HTTPPathStartup, HTTPStartup(pres)},
+			{http.MethodGet, HTTPPathReady, HTTPReady(pres)},
+			{http.MethodGet, HTTPPathLive, HTTPLive(pres)},
+		}
+	} else {
+		handlers = append(handlers, []Handlers{
+			{http.MethodGet, HTTPPathStartup, HTTPStartup(pres)},
+			{http.MethodGet, HTTPPathReady, HTTPReady(pres)},
+			{http.MethodGet, HTTPPathLive, HTTPLive(pres)},
+		}...)
+	}
+
+	for _, h := range handlers {
+		smux.Handle(h.string, h.HandlerFunc)
+	}
+
 	return &http.Server{
 		Addr:              fmt.Sprintf("%s:%d", host, port),
 		Handler:           smux,

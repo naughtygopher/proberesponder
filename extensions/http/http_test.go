@@ -388,6 +388,17 @@ func Test_contentNeogiater(t *testing.T) {
 	}
 }
 
+func TestCustomHandler(tt *testing.T) {
+	expectedResponse := "success"
+	srv := Server(proberesponder.New(), "", 1234, Handlers{http.MethodGet, "/mypath", func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(expectedResponse))
+	}})
+	req, _ := http.NewRequest(http.MethodGet, "/mypath", nil)
+	w := httptest.NewRecorder()
+	srv.Handler.ServeHTTP(w, req)
+	assert.Equal(tt, expectedResponse, w.Body.String())
+}
+
 func httpReq(acceptType string) *http.Request {
 	req, _ := http.NewRequest(http.MethodGet, "http://localhost:1234", nil)
 	req.Header.Add(httpHeaderAccept, acceptType)
