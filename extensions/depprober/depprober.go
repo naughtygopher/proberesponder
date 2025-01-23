@@ -11,6 +11,11 @@ import (
 	"github.com/naughtygopher/proberesponder"
 )
 
+var (
+	// ensure Probe implements Prober
+	_ = Prober(&Probe{})
+)
+
 type Prober interface {
 	// ServiceID unique ID for the dependency
 	ServiceID() string
