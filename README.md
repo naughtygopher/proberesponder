@@ -18,6 +18,9 @@ By default a bare bones HTTP server can be setup to respond to probe request. Th
 
 `AppendHealthResponse` is a helper function with which you can maintain statuses of a dependency or similar. All the custom statuses set using this and the native ones (startup, live, ready) can be fetched as a map[string]string using `HealthResponse`.
 
+`DepProber` is an extension package which provides basic dependency probing. Refer to tests for usage of `Probe` to setup your probes.
+e.g. you can ping the application's database periodically, and then use it for updating the app status to not live.
+
 ## Sample usage
 
 ```golang
