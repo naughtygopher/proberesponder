@@ -2,8 +2,8 @@
 
 [![](https://github.com/naughtygopher/proberesponder/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/naughtygopher/proberesponder/actions)
 [![Go Reference](https://pkg.go.dev/badge/github.com/naughtygopher/proberesponder.svg)](https://pkg.go.dev/github.com/naughtygopher/proberesponder)
-[![Go Report Card](https://goreportcard.com/badge/github.com/naughtygopher/proberesponder?cache_invalidate=v0.4.0)](https://goreportcard.com/report/github.com/naughtygopher/proberesponder)
-[![Coverage Status](https://coveralls.io/repos/github/naughtygopher/proberesponder/badge.svg?branch=main&cache_invalidate=v0.4.0)](https://coveralls.io/github/naughtygopher/proberesponder?branch=main)
+[![Go Report Card](https://goreportcard.com/badge/github.com/naughtygopher/proberesponder?cache_invalidate=v0.5.0)](https://goreportcard.com/report/github.com/naughtygopher/proberesponder)
+[![Coverage Status](https://coveralls.io/repos/github/naughtygopher/proberesponder/badge.svg?branch=main&cache_invalidate=v0.5.0)](https://coveralls.io/github/naughtygopher/proberesponder?branch=main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/creativecreature/sturdyc/blob/master/LICENSE)
 
 # Proberesponder
