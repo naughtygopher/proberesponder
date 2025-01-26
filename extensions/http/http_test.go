@@ -389,14 +389,26 @@ func Test_contentNeogiater(t *testing.T) {
 }
 
 func TestCustomHandler(tt *testing.T) {
-	expectedResponse := "success"
-	srv := Server(proberesponder.New(), "", 1234, Handlers{http.MethodGet, "/mypath", func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write([]byte(expectedResponse))
-	}})
-	req, _ := http.NewRequest(http.MethodGet, "/mypath", nil)
-	w := httptest.NewRecorder()
-	srv.Handler.ServeHTTP(w, req)
-	assert.Equal(tt, expectedResponse, w.Body.String())
+	tt.Run("custom handler success", func(t *testing.T) {
+		expectedResponse := "success"
+		srv := Server(proberesponder.New(), "", 1234, Handler{http.MethodGet, "/mypath", func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte(expectedResponse))
+		}})
+		req, _ := http.NewRequest(http.MethodGet, "/mypath", nil)
+		w := httptest.NewRecorder()
+		srv.Handler.ServeHTTP(w, req)
+		assert.Equal(tt, expectedResponse, w.Body.String())
+	})
+	tt.Run("unmatching method", func(t *testing.T) {
+		srv := Server(proberesponder.New(), "", 1234, Handler{http.MethodPost, "/mypath", func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("success"))
+		}})
+		req, _ := http.NewRequest(http.MethodGet, "/mypath", nil)
+		w := httptest.NewRecorder()
+		srv.Handler.ServeHTTP(w, req)
+		assert.Equal(t, "", w.Body.String())
+		assert.Equal(t, http.StatusNotFound, w.Result().StatusCode)
+	})
 }
 
 func httpReq(acceptType string) *http.Request {
