@@ -124,6 +124,7 @@ func Start(
 	*/
 	tick := time.NewTicker(delay)
 	go func() {
+        probe(delay, pstatus, pingers...)
 		for range tick.C {
 			probe(delay, pstatus, pingers...)
 		}
